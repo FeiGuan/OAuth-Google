@@ -32,6 +32,10 @@ public class CallbackServlet extends HttpServlet {
 		}
 		resp.getWriter().println("Authorization Code: " + authCode);
 
+//		resp.sendRedirect("https://accounts.google.com/o/oauth2/token?"
+//				+ "code=" + authCode + "&client_id=" + Constants.CLIENTID
+//				+ "&client_secret=" + Constants.CLIENTSECRET + "&redirect_uri="
+//				+ Constants.TOKENURI + "&grant_type=" + "authorization_code");
 		// URL url = new URL("https://accounts.google.com/o/oauth2/token");
 		// HttpURLConnection conn;
 		// conn = (HttpURLConnection) url.openConnection();
@@ -42,7 +46,12 @@ public class CallbackServlet extends HttpServlet {
 		// conn.setRequestProperty("redirect_uri", Constants.TOKENURI);
 		// conn.setRequestProperty("grant_type", "authorization_code");
 		// conn.connect();
-		// System.out.println(conn.getResponseMessage());
+		// resp.getWriter().println(conn.getResponseMessage());
+		// resp.getWriter().println(conn.getRequestProperties());
+		// // resp.getWriter().println(conn.getContent());
+		// // resp.getWriter().println(conn.getHeaderFields());
+		// // resp.getWriter().println(conn.getURL());
+		// // resp.getWriter().println(conn.getRequestProperties());
 		// conn.disconnect();
 	}
 }

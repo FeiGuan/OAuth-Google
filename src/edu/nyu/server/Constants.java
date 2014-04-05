@@ -17,17 +17,17 @@ public class Constants {
 	 * set the authorized origin URL as appspot URL -> set redirect URI as the
 	 * callback URI
 	 */
-	public static String CLIENTID = "1077597541857-quegjqtnij6asdnmhbqpcr476su8aghj.apps.googleusercontent.com";
+	public static String CLIENTID = "313844719605-h024h21u3r1o68800t0u14b08v5g6ph1.apps.googleusercontent.com";
 	/**
 	 * Callback Redirect URI, change the domain name for your app
 	 */
-	public static String APPURI = "https://1-dot-handy-curve-541.appspot.com/callback";
+	public static String APPURI = "https://1-dot-hip-heading-541.appspot.com/callback";
 	/**
 	 * Token Redirect URI, change the domain name for your app
 	 */
-	public static String TOKENURI = "https://1-dot-handy-curve-541.appspot.com/token";
+	public static String TOKENURI = "https://1-dot-hip-heading-541.appspot.com/token";
 	/**
 	 * Downloaded as a json file from app console,
 	 */
-	public static String CLIENTSECRET = "CNWyEZCZ_rAQ5-HNlzAvNun0";
+	public static String CLIENTSECRET = "xn_yjM-SRT7Oa5KtbTv8JndV";
 }
