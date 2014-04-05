@@ -1,6 +1,10 @@
 package edu.nyu.server;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -9,6 +13,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+
+import edu.nyu.server.util.JSONUtil;
 
 public class CallbackServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -32,26 +40,56 @@ public class CallbackServlet extends HttpServlet {
 		}
 		resp.getWriter().println("Authorization Code: " + authCode);
 
-//		resp.sendRedirect("https://accounts.google.com/o/oauth2/token?"
-//				+ "code=" + authCode + "&client_id=" + Constants.CLIENTID
-//				+ "&client_secret=" + Constants.CLIENTSECRET + "&redirect_uri="
-//				+ Constants.TOKENURI + "&grant_type=" + "authorization_code");
-		// URL url = new URL("https://accounts.google.com/o/oauth2/token");
-		// HttpURLConnection conn;
-		// conn = (HttpURLConnection) url.openConnection();
-		// conn.setRequestMethod("POST");
-		// conn.setRequestProperty("code", authCode);
-		// conn.setRequestProperty("client_id", Constants.CLIENTID);
-		// conn.setRequestProperty("client_secret", Constants.CLIENTSECRET);
-		// conn.setRequestProperty("redirect_uri", Constants.TOKENURI);
-		// conn.setRequestProperty("grant_type", "authorization_code");
-		// conn.connect();
-		// resp.getWriter().println(conn.getResponseMessage());
-		// resp.getWriter().println(conn.getRequestProperties());
-		// // resp.getWriter().println(conn.getContent());
-		// // resp.getWriter().println(conn.getHeaderFields());
-		// // resp.getWriter().println(conn.getURL());
-		// // resp.getWriter().println(conn.getRequestProperties());
-		// conn.disconnect();
+		// ///////////////////////////////////////////////////////////////////
+
+		String urlParameters = "code=" + authCode + "&client_id="
+				+ Constants.CLIENTID + "&client_secret="
+				+ Constants.CLIENTSECRET + "&redirect_uri="
+				+ Constants.TOKENURI + "&grant_type=" + "authorization_code";
+
+		URL url = new URL("https://accounts.google.com/o/oauth2/token");
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setDoOutput(true);
+		conn.setDoInput(true);
+		conn.setInstanceFollowRedirects(false);
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type",
+				"application/x-www-form-urlencoded");
+		conn.setRequestProperty("charset", "utf-8");
+		conn.setRequestProperty("Content-Length",
+				"" + Integer.toString(urlParameters.getBytes().length));
+		conn.setUseCaches(false);
+
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		wr.writeBytes(urlParameters);
+		wr.flush();
+		wr.close();
+		InputStream in = conn.getInputStream();
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(in, writer, "UTF-8");
+		String theString = writer.toString();
+		resp.getWriter().println(theString);
+		conn.disconnect();
+	}
+
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		resp.sendRedirect("https://1-dot-hip-heading-541.appspot.com/callback");
+		resp.setContentType("text/plain");
+		resp.getWriter().println("hw");
+		StringBuffer buffer = new StringBuffer();
+		String line = null;
+		try {
+			BufferedReader reader = req.getReader();
+			while ((line = reader.readLine()) != null) {
+				buffer.append(line);
+			}
+
+			Map<Object, Object> parameterMap = (Map) JSONUtil.parse(buffer
+					.toString());
+			
+			resp.getWriter().println(parameterMap);
+		} catch (Exception e) {
+
+		}
 	}
 }
