@@ -6,15 +6,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 import edu.nyu.server.util.JSONUtil;
 
@@ -23,7 +28,6 @@ public class CallbackServlet extends HttpServlet {
 			throws IOException {
 		Map<String, String[]> map = req.getParameterMap();
 		resp.setContentType("text/plain");
-		// resp.getWriter().println("hw");
 
 		/**
 		 * authorization code from Google
@@ -38,9 +42,7 @@ public class CallbackServlet extends HttpServlet {
 				authCode = map.get(key)[0];
 			}
 		}
-		resp.getWriter().println("Authorization Code: " + authCode);
-
-		// ///////////////////////////////////////////////////////////////////
+		// resp.getWriter().println(authCode);
 
 		String urlParameters = "code=" + authCode + "&client_id="
 				+ Constants.CLIENTID + "&client_secret="
@@ -48,6 +50,30 @@ public class CallbackServlet extends HttpServlet {
 				+ Constants.TOKENURI + "&grant_type=" + "authorization_code";
 
 		URL url = new URL("https://accounts.google.com/o/oauth2/token");
+		String postReqResp = processPost(urlParameters, url);
+
+		JSONObject jsonOb = null;
+		String accToken = null;
+		try {
+			jsonOb = new JSONObject(postReqResp);
+			accToken = (String) jsonOb.get("access_token");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		urlParameters = "access_token=" + accToken;
+		resp.getWriter().println("access_token: " + accToken);
+
+		url = new URL("https://www.googleapis.com/plus/v1/people/me?"
+				+ urlParameters);
+		String getReqResp = processGet(url);
+
+		resp.getWriter().println(getReqResp);
+
+	}
+
+	private String processPost(String parameters, URL url) throws IOException {
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
 		conn.setDoInput(true);
@@ -57,39 +83,37 @@ public class CallbackServlet extends HttpServlet {
 				"application/x-www-form-urlencoded");
 		conn.setRequestProperty("charset", "utf-8");
 		conn.setRequestProperty("Content-Length",
-				"" + Integer.toString(urlParameters.getBytes().length));
+				"" + Integer.toString(parameters.getBytes().length));
 		conn.setUseCaches(false);
 
 		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-		wr.writeBytes(urlParameters);
+		wr.writeBytes(parameters);
 		wr.flush();
 		wr.close();
 		InputStream in = conn.getInputStream();
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(in, writer, "UTF-8");
 		String theString = writer.toString();
-		resp.getWriter().println(theString);
 		conn.disconnect();
+		return theString;
 	}
 
-	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		resp.sendRedirect("https://1-dot-hip-heading-541.appspot.com/callback");
-		resp.setContentType("text/plain");
-		resp.getWriter().println("hw");
-		StringBuffer buffer = new StringBuffer();
-		String line = null;
-		try {
-			BufferedReader reader = req.getReader();
-			while ((line = reader.readLine()) != null) {
-				buffer.append(line);
-			}
+	private String processGet(URL url) throws IOException {
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setDoOutput(true);
+		conn.setDoInput(true);
+		conn.setInstanceFollowRedirects(false);
+		conn.setRequestMethod("GET");
+		conn.setRequestProperty("Content-Type",
+				"application/x-www-form-urlencoded");
+		conn.setRequestProperty("charset", "utf-8");
+		conn.setUseCaches(false);
 
-			Map<Object, Object> parameterMap = (Map) JSONUtil.parse(buffer
-					.toString());
-			
-			resp.getWriter().println(parameterMap);
-		} catch (Exception e) {
-
-		}
+		InputStream in = conn.getInputStream();
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(in, writer, "UTF-8");
+		String theString = writer.toString();
+		conn.disconnect();
+		return theString;
 	}
 }
