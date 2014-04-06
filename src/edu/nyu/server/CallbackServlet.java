@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
+import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
@@ -63,13 +64,37 @@ public class CallbackServlet extends HttpServlet {
 		}
 
 		urlParameters = "access_token=" + accToken;
-		resp.getWriter().println("access_token: " + accToken);
+		// resp.getWriter().println("access_token: " + accToken);
 
 		url = new URL("https://www.googleapis.com/plus/v1/people/me?"
 				+ urlParameters);
 		String getReqResp = processGet(url);
 
-		resp.getWriter().println(getReqResp);
+		// resp.getWriter().println(getReqResp);
+
+		jsonOb = null;
+		String email = null;
+		String familyName = null;
+		String givenName = null;
+		try {
+			jsonOb = new JSONObject(getReqResp);
+			JSONArray emailList = jsonOb.getJSONArray("emails");
+			for (int i = 0; i < emailList.length(); i++) {
+				JSONObject emailInfo = emailList.getJSONObject(i);
+				if (emailInfo.getString("type").equals("account")) {
+					email = emailInfo.getString("value");
+					break;
+				}
+			}
+			JSONObject names = (JSONObject) jsonOb.get("name");
+			familyName = names.getString("familyName");
+			givenName = names.getString("givenName");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		resp.getWriter().println(email);
+		resp.getWriter().println(familyName);
+		resp.getWriter().println(givenName);
 
 	}
 
