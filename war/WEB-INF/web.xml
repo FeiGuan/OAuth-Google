@@ -5,29 +5,41 @@ xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet>
-		<servlet-name>Oauth</servlet-name>
-		<servlet-class>edu.nyu.server.OauthServlet</servlet-class>
+		<servlet-name>GoogleOauth</servlet-name>
+		<servlet-class>edu.nyu.server.GoogleOauthServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>Oauth</servlet-name>
-		<url-pattern>/oauth</url-pattern>
+		<servlet-name>GoogleOauth</servlet-name>
+		<url-pattern>/googleoauth</url-pattern>
 	</servlet-mapping>
 	<servlet>
-	    <servlet-name>Callback</servlet-name>
-	    <servlet-class>edu.nyu.server.CallbackServlet</servlet-class>
+	    <servlet-name>GoogleCallback</servlet-name>
+	    <servlet-class>edu.nyu.server.GoogleCallbackServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	    <servlet-name>Callback</servlet-name>
-	    <url-pattern>/callback</url-pattern>
+	    <servlet-name>GoogleCallback</servlet-name>
+	    <url-pattern>/googlecallback</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>FacebookOauth</servlet-name>
+		<servlet-class>edu.nyu.server.FacebookOauthServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FacebookOauth</servlet-name>
+		<url-pattern>/facebookoauth</url-pattern>
 	</servlet-mapping>
 	<servlet>
-	    <servlet-name>Token</servlet-name>
-	    <servlet-class>edu.nyu.server.TokenServlet</servlet-class>
+	    <servlet-name>FacebookCallback</servlet-name>
+	    <servlet-class>edu.nyu.server.FacebookCallbackServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	    <servlet-name>Token</servlet-name>
-	    <url-pattern>/token</url-pattern>
+	    <servlet-name>FacebookCallback</servlet-name>
+	    <url-pattern>/facebookcallback</url-pattern>
 	</servlet-mapping>
+
+	
+	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>

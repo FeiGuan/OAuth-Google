@@ -24,7 +24,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 import edu.nyu.server.util.JSONUtil;
 
-public class CallbackServlet extends HttpServlet {
+public class GoogleCallbackServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		Map<String, String[]> map = req.getParameterMap();
@@ -48,7 +48,7 @@ public class CallbackServlet extends HttpServlet {
 		String urlParameters = "code=" + authCode + "&client_id="
 				+ Constants.CLIENTID + "&client_secret="
 				+ Constants.CLIENTSECRET + "&redirect_uri="
-				+ Constants.TOKENURI + "&grant_type=" + "authorization_code";
+				+ Constants.APPURI + "&grant_type=" + "authorization_code";
 
 		URL url = new URL("https://accounts.google.com/o/oauth2/token");
 		String postReqResp = processPost(urlParameters, url);

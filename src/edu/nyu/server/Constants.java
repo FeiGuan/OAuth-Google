@@ -22,11 +22,7 @@ public class Constants {
 	/**
 	 * Callback Redirect URI, change the domain name for your app
 	 */
-	public static String APPURI = "https://1-dot-hip-heading-541.appspot.com/callback";
-	/**
-	 * Token Redirect URI, change the domain name for your app
-	 */
-	public static String TOKENURI = "https://1-dot-hip-heading-541.appspot.com/callback";
+	public static String APPURI = "https://1-dot-hip-heading-541.appspot.com/googlecallback";
 	/**
 	 * Downloaded as a json file from app console,
 	 */
