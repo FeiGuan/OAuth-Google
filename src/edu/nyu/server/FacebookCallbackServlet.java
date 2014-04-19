@@ -30,7 +30,7 @@ public class FacebookCallbackServlet extends HttpServlet {
 		if (code == null || code.equals("")) {
 			// an error occurred, handle this
 		}
-
+		// resp.getWriter().println(code);
 		String token = null;
 		try {
 			String g = "https://graph.facebook.com/oauth/access_token?client_id="
@@ -57,6 +57,7 @@ public class FacebookCallbackServlet extends HttpServlet {
 			// an error occurred, handle this
 		}
 
+		// resp.getWriter().println(token);
 		String graph = null;
 		try {
 			String g = "https://graph.facebook.com/me?" + token;
@@ -74,6 +75,8 @@ public class FacebookCallbackServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
+		// resp.getWriter().println(graph);
+
 		String facebookId = null;
 		String firstName = null;
 
@@ -89,8 +92,20 @@ public class FacebookCallbackServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		graph = processGet(new URL("https://graph.facebook.com/" + facebookId
-				+ "?fields=picture.type(large)"));
+		// graph = processGet(new URL("https://graph.facebook.com/" + facebookId
+		// + "?fields=picture.type(large)"));
+		String g = "https://graph.facebook.com/" + facebookId
+				+ "?fields=picture.type(large)";
+		URL u = new URL(g);
+		URLConnection c = u.openConnection();
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				c.getInputStream()));
+		String inputLine;
+		StringBuffer b = new StringBuffer();
+		while ((inputLine = in.readLine()) != null)
+			b.append(inputLine + "\n");
+		in.close();
+		graph = b.toString();
 
 		String profileURL = null;
 		try {
@@ -98,35 +113,21 @@ public class FacebookCallbackServlet extends HttpServlet {
 			JSONObject picOb = (JSONObject) json.get("picture");
 			JSONObject dataOb = (JSONObject) picOb.get("data");
 			profileURL = dataOb.getString("url");
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		resp.getWriter().println("FirstName:" + firstName + "  \n");
-		resp.getWriter().println("LastName:" + lastName + "  \n");
-		resp.getWriter().println("Email:" + email + "  \n");
-		resp.getWriter().println("ProfileURL:" + profileURL + "  \n");
+		resp.getWriter().println("FacebookId:" + facebookId + "<br/>");
+		resp.getWriter().println("FirstName:" + firstName + "<br/>");
+		resp.getWriter().println("LastName:" + lastName + "<br/>");
+		resp.getWriter().println("Email:" + email + "<br/>");
+		resp.getWriter().println("PicURL:" + profileURL + "<br/>");
 
 		graph = processGet(new URL("https://graph.facebook.com/me/friends?"
 				+ token));
 
-		String friendNames[] = new String[5];
-		String friendIds[] = new String[5];
-		try {
-			JSONObject json = new JSONObject(graph);
-			JSONArray friendArray = json.getJSONArray("data");
-			for (int i = 0; i < 5; i++) {
-				JSONObject friend = friendArray.getJSONObject(i);
-				friendNames[i] = friend.getString("name");
-				friendIds[i] = friend.getString("id");
-			}
-			for (int i = 0; i < 5; i++) {
-				resp.getWriter().println(
-						"Friend" + i + " name:" + friendNames[i] + " id:"
-								+ friendIds[i] + "  \n");
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		String friends = graph;
+		resp.getWriter().println("Friends:" + friends);
 	}
 
 	private String processGet(URL url) throws IOException {

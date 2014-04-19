@@ -47,11 +47,13 @@ public class GoogleCallbackServlet extends HttpServlet {
 
 		String urlParameters = "code=" + authCode + "&client_id="
 				+ Constants.CLIENTID + "&client_secret="
-				+ Constants.CLIENTSECRET + "&redirect_uri="
-				+ Constants.APPURI + "&grant_type=" + "authorization_code";
+				+ Constants.CLIENTSECRET + "&redirect_uri=" + Constants.APPURI
+				+ "&grant_type=" + "authorization_code";
 
 		URL url = new URL("https://accounts.google.com/o/oauth2/token");
 		String postReqResp = processPost(urlParameters, url);
+
+		// resp.getWriter().println(postReqResp);
 
 		JSONObject jsonOb = null;
 		String accToken = null;
@@ -70,7 +72,7 @@ public class GoogleCallbackServlet extends HttpServlet {
 				+ urlParameters);
 		String getReqResp = processGet(url);
 
-		// resp.getWriter().println(getReqResp);
+		resp.getWriter().println(getReqResp);
 
 		jsonOb = null;
 		String email = null;
